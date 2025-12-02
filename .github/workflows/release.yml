@@ -32,14 +32,15 @@ jobs:
         run: |
           python -m PyInstaller --onefile --windowed --icon win_can_tool.ico --version-file version_info.txt --name win_can_tool can_gui_launcher.py
 
-      - name: Archive EXE
+      - name: Archive EXE (ZIP)
+        shell: pwsh
         run: |
-          tar -cvf win_can_tool.zip dist/win_can_tool.exe
+          Compress-Archive -Path "dist/win_can_tool.exe" -DestinationPath "win_can_tool.zip" -Force
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            win_can_tool.zip
+          tag_name: ${{ github.ref_name }} # <-- REQUIRED
+          files: win_can_tool.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
