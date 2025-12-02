@@ -1,0 +1,45 @@
+name: Build Windows EXE
+
+on:
+  # Trigger when pushing a version tag like v1.0.0
+  push:
+    tags:
+      - "v*.*.*"
+
+  # Allow manual runs
+  workflow_dispatch:
+
+jobs:
+  build-windows-exe:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install PyInstaller and project
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyinstaller
+          python -m pip install .
+
+      - name: Build GUI EXE
+        run: |
+          python -m PyInstaller ^
+            --onefile ^
+            --windowed ^
+            --icon win_can_tool.ico ^
+            --version-file version_info.txt ^
+            --name win_can_tool ^
+            can_gui_launcher.py
+
+      - name: Upload EXE artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: win_can_tool-exe
+          path: dist/win_can_tool.exe
