@@ -1,113 +1,174 @@
-# CAN Simulator
+# 🚌 WIN CAN TOOL
+### Windows CAN-Bus Simulator & Testing Tool
+**GUI + CLI • J1939-style messages • Real hardware output • Windows EXE auto-builds**
 
-A cross-platform CAN (Controller Area Network) message generator with both a GUI and CLI.
-
-This tool is useful for:
-- Testing CAN-based devices
-- Developing CAN parsers
-- Prototyping embedded systems
-- Generating repeatable CAN traffic
-- Teaching or debugging CAN messaging behavior
-
-The simulator provides:
-- Customizable CAN messages
-- Support for extended (29-bit) and standard (11-bit) IDs
-- J1939-style and NMEA-style demo messages
-- Live-editable values (speed, heading, GNSS position, temperatures, etc.)
-- User-defined raw CAN frames
-- Start/Stop message scheduler
-- JSON save/load support for profiles
-- Multiple CAN backends (`virtual`, `socketcan`, Kvaser, PCAN, neoVI, etc.)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)
+![PyPI](https://img.shields.io/pypi/v/win-can-tool.svg)
+![Platform](https://img.shields.io/badge/Platform-Windows-purple.svg)
 
 ---
 
-## Features
+## 🚀 Overview
+**WIN CAN TOOL** is a CAN-Bus simulator with both a **GUI** and **CLI** interface.
+It allows you to:
 
-### ✔ GUI Mode
-- Real-time editing of GNSS and engine-like values
-- Add, edit, or delete raw CAN frames
-- Enable/disable individual messages
-- Switch between multiple predefined message profiles
-- Save/load full simulator configurations
-- Event log with timestamps
+- simulate engine, GNSS, and vehicle messages
+- output CAN traffic to real hardware (ValueCAN, Kvaser, Peak, virtual, ICS, etc.)
+- test dashboards, gateways, CDL devices, or software decoders
+- run dynamic simulation profiles
+- build custom message streams with Python
 
-### ✔ CLI Mode
+Every version tag automatically produces a **Windows EXE release**.
+
+---
+
+## 📥 Download the Windows EXE
+Latest release:
+👉 https://github.com/kfafard/win_can_tool/releases/latest
+
+Download `win_can_tool.zip`, unzip, and run **win_can_tool.exe**.
+
+---
+
+## 📦 Install via PyPI
+Prefer the Python version?
 
 ```bash
-py -m can_sim.cli --interface virtual --channel vcan0 --profile "GNSS only"
+pip install win-can-tool
 ````
 
-Useful for:
-
-* Automated testing
-* Headless environments
-* Generating consistent CAN traffic
-
----
-
-## Installation
+Run GUI:
 
 ```bash
-pip install PyQt6 python-can
+win-can-gui
 ```
 
-Optional extras:
+Run CLI:
 
 ```bash
-pip install filelock
+win-can-cli --interface virtual --channel 0
 ```
 
 ---
 
-## Running the GUI
+## 🖥 GUI Features
+
+* Live GNSS position manipulation
+* Real-time engine RPM, hours, speed, load, fuel, temps
+* Clean PyQt6 interface
+* Status bar + event log
+* Auto-generated CAN frames at realistic frequencies
+* Selectable python-can backend interface
+
+## 🖥 GUI Preview
+
+### 🌙 Dark Mode
+![Dark Mode](assets/gui_dark.png)
+
+### ☀️ Light Mode
+![Light Mode](assets/gui_light.png)
+
+
+---
+
+## 🛠 CLI Usage Example
+
+Send simulated CAN frames over a selected hardware interface:
 
 ```bash
-py -m can_sim.gui
+win-can-cli --interface neovi --channel 1
 ```
 
-## Running the CLI
+Run the virtual interface:
 
 ```bash
-py -m can_sim.cli --interface virtual --channel vcan0
-```
-
-Common CAN backends:
-
-```
---interface kvaser
---interface pcan
---interface socketcan
---interface virtual
---interface neovi
+win-can-cli --interface virtual --channel 0
 ```
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```
-can_sim/
-    bus.py              # CAN bus interface wrapper
-    cli.py              # Command-line entrypoint
-    engine.py           # Background scheduler and message timing engine
-    gui.py              # PyQt GUI interface
-    profiles.py         # Demo message profiles and encoders
+win_can_tool/
+ ├── bus.py              # CAN interface layer (python-can)
+ ├── engine.py           # Engine + GNSS simulation models
+ ├── gui.py              # PyQt6 GUI application
+ ├── cli.py              # CLI interface
+ ├── profiles.py         # Simulation profiles
+ ├── can_gui_launcher.py # PyInstaller entrypoint for EXE builds
 ```
 
 ---
 
-## Roadmap (future versions)
+## ⚙ Simulation Profiles
 
-* Modular GUI (split into components)
-* Multi-frame (fast-packet) NMEA messages
-* J1939 transport protocol (TP.CM/TP.DT)
-* Real-time charts/visualization widgets
-* Multi-channel CAN output
-* Profile editor UI
-* Plugin system for custom message generators
+Profiles define preset simulation states. Example:
+
+```python
+{
+    "engine": {"rpm": 1500, "speed_kph": 12.4},
+    "gnss":   {"lat": 51.23456, "lon": -102.34567}
+}
+```
 
 ---
 
-## License
+## 🔧 Development
 
-MIT
+Clone the repo:
+
+```bash
+git clone https://github.com/kfafard/win_can_tool
+cd win_can_tool
+```
+
+Install in editable mode:
+
+```bash
+pip install -e .
+```
+
+Run GUI manually:
+
+```bash
+python -m win_can_tool.gui
+```
+
+---
+
+## 🏗 Auto-Build Pipeline
+
+GitHub Actions automatically:
+
+1. Builds the EXE using PyInstaller
+2. Zips the executable
+3. Creates a GitHub Release
+4. Uploads the binary
+
+Triggered by pushing a version tag:
+
+```bash
+git tag v1.0.9
+git push origin v1.0.9
+```
+
+---
+
+## 🤝 Contributing
+
+Pull requests and issues are welcome.
+
+---
+
+## 📜 License
+
+MIT License.
+
+---
+
+## ⚡ Credits
+
+Developed by **Kurtis Fafard**
+Built for real-world CAN-Bus testing, simulation, and rapid development.
