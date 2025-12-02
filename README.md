@@ -164,7 +164,15 @@ Pull requests and issues are welcome.
 
 ## 📜 License
 
-MIT License.
+This project is licensed under the **MIT License** – see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 📝 Changelog
+
+All notable changes are documented in the [CHANGELOG.md](CHANGELOG.md).
+
+Latest release: **v1.1.0**
 
 ---
 
