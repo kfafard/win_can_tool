@@ -1,0 +1,38 @@
+# Byte-compiled / cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.env/
+.venv/
+env/
+venv/
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Editor settings
+.vscode/
+.idea/
+
+# Python packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Profiles and backups
+*.json_backup
+
+# Logs
+*.log
+
+# PyInstaller output (if you build an EXE later)
+*.spec
+
+# Temporary files
+*.tmp
+*.temp

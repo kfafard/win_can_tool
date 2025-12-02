@@ -1,0 +1,7 @@
+PyQt6
+python-can
+
+# Optional extras (uncomment if needed in the future)
+# filelock        # improves neoVI backend stability
+# canmatrix       # DBC/ARXML utilities for future features
+# can-isotp       # ISO-TP transport protocol support
