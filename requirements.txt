@@ -1,5 +1,5 @@
-PyQt6
-python-can
+PyQt6==6.7.0
+python-can==4.3.1
 
 # Optional extras (uncomment if needed in the future)
 # filelock        # improves neoVI backend stability
