@@ -34,3 +34,4 @@ jobs:
         with:
           name: win_can_tool-exe
           path: dist/win_can_tool.exe
+
