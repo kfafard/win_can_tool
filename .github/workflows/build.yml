@@ -1,12 +1,9 @@
 name: Build Windows EXE
 
 on:
-  # Trigger when pushing a version tag like v1.0.0
   push:
     tags:
       - "v*.*.*"
-
-  # Allow manual runs
   workflow_dispatch:
 
 jobs:
@@ -30,13 +27,7 @@ jobs:
 
       - name: Build GUI EXE
         run: |
-          python -m PyInstaller ^
-            --onefile ^
-            --windowed ^
-            --icon win_can_tool.ico ^
-            --version-file version_info.txt ^
-            --name win_can_tool ^
-            can_gui_launcher.py
+          python -m PyInstaller --onefile --windowed --icon win_can_tool.ico --version-file version_info.txt --name win_can_tool can_gui_launcher.py
 
       - name: Upload EXE artifact
         uses: actions/upload-artifact@v4
