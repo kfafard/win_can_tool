@@ -41,7 +41,7 @@ from .bus import open_bus
 from .engine import CanSimEngine, CanMessageTemplate
 from . import profiles as profiles_mod
 from .profiles import PROFILE_BUILDERS, DEFAULT_PROFILE_NAME
-from can_sim import __version__, __author__
+from . import __version__, __author__
 
 
 # ---------------------------------------------------------------------------

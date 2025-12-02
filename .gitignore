@@ -23,6 +23,8 @@ build/
 dist/
 *.egg-info/
 .eggs/
+.cache/
+.python-version
 
 # Profiles and backups
 *.json_backup
@@ -30,8 +32,11 @@ dist/
 # Logs
 *.log
 
-# PyInstaller output (if you build an EXE later)
+# PyInstaller output
 *.spec
+
+# Testing
+pytest_cache/
 
 # Temporary files
 *.tmp
