@@ -69,7 +69,9 @@ jobs:
 
       - name: Build EXE
         run: |
-          pyinstaller win_can_tool.spec
+          if exist win_can_tool.spec del win_can_tool.spec
+          pyinstaller --onefile --windowed --name win_can_tool --icon win_can_tool.ico can_gui_launcher.py
+
 
       - name: Upload EXE artifact
         uses: actions/upload-artifact@v4
