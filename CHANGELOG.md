@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## <!-- 1 -->🐛 Bug Fixes
+
+
+- Correct PyInstaller path for EXE build (453d835)
+
+
+
+## <!-- 3 -->📚 Documentation
+
+
+- Update changelog for v1.2.5 (a853549)
+
+
+
 ## <!-- 3 -->📚 Documentation
 
 
