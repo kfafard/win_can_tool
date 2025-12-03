@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## <!-- 3 -->📚 Documentation
+
+
+- Update changelog for v1.2.6 (db50b2e)
+
+
+
 ## <!-- 1 -->🐛 Bug Fixes
 
 
