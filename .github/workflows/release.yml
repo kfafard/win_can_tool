@@ -85,10 +85,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      # ✔ WORKING git-cliff installer using static binary
       - name: Install git-cliff
         run: |
-          sudo apt-get update
-          sudo apt-get install -y git-cliff
+          set -e
+          curl -s https://api.github.com/repos/orhun/git-cliff/releases/latest \
+            | grep "browser_download_url.*x86_64-unknown-linux-musl.tar.gz" \
+            | cut -d '"' -f 4 \
+            | wget -qi -
+          tar -xzf git-cliff-*-x86_64-unknown-linux-musl.tar.gz
+          sudo mv git-cliff /usr/local/bin/
 
       - name: Generate changelog
         run: git-cliff -c ./cliff.toml -o CHANGELOG.md
