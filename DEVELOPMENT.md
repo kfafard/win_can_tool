@@ -1,316 +1,192 @@
-# 🛠 **DEVELOPMENT.md**
+# Development Deep Dive
 
-### *Internal Architecture & Development Guide for win_can_tool*
-
-This document provides deeper technical details for contributors who want to understand, maintain, or extend the internal architecture of **win_can_tool**.
-
-If you're only looking to publish releases or install the project, check `README.md` or `CONTRIBUTING.md`.
+This document goes deeper into internal architecture, design patterns, data flows, and extension points.
 
 ---
 
-# 📦 Project Structure
+# 🧩 Core Components
+
+## bus.py — CAN Interface Abstraction
+
+Implements:
+- Virtual CAN (`python-can` internal loopback)
+- ValueCAN4 (via Python CAN + ICS driver)
+
+All bus implementations must expose:
+
+```python
+send_message(msg)
+open()
+close()
+```
+
+A CAN frame is always structured using:
+
+```python
+engine.build_can_frame(template, override_bytes)
+```
+
+---
+
+# engine.py — Message Engine
+
+The engine handles the core logic:
+
+### 1. **Message Template Expansion**
+A template contains:
+- CAN ID
+- DLC
+- byte pattern (hex list)
+- frequency in Hz
+
+### 2. **Timers**
+Each message gets a `QTimer`:
+```python
+timer.setInterval(int(1000 / frequency))
+timer.timeout.connect(lambda: self._send(template))
+```
+
+### 3. **Overriding Byte Updates**
+GUI modifications propagate immediately:
+```python
+template.bytes = gui_bytes
+```
+
+### 4. **Bus Independence**
+Engine never cares what interface is used — only calls `.send_message()`.
+
+---
+
+# gui.py — Application UI
+
+Built using PyQt6.
+
+### Responsibilities:
+- Load profiles (`QComboBox`)
+- Create/edit message entries (`QTableWidget`)
+- Handle interface selection
+- Start/stop engine timers
+- Real-time log updates
+- Icons + assets
+
+### Asset Paths
+Handles PyInstaller using:
+
+```python
+if hasattr(sys, "_MEIPASS"):
+    asset_path = Path(sys._MEIPASS) / "assets"
+else:
+    asset_path = Path(__file__).parent.parent / "assets"
+```
+
+---
+
+# profiles.py — Profile Definitions
+
+Profile builders are simple Python functions:
+
+```python
+def PROFILE_BUILDERS():
+    return {
+        "Example": build_example_profile
+    }
+```
+
+A profile returns:
+```python
+[
+    CanMessageTemplate(
+        pgn=65262,
+        priority=3,
+        source=0x23,
+        data=[0x00, 0xFF, 0x00, 0x10, 0xAA, 0xBB, 0xCC, 0xDD],
+        freq=10
+    ),
+    ...
+]
+```
+
+You can add:
+- GNSS messages
+- Engine data
+- Hydraulics data
+- Transmission data
+- Misc OEM packets
+
+---
+
+# 🔌 CAN Bus Flow
+
+```
+GUI → Engine → Bus → CAN Device → External Listener
+```
+
+---
+
+# 🧱 Future Expansion Points
+
+## Planned:
+- CLI standalone tool
+- Replay logs
+- Parameterized message generators
+- Scripting API
+- Add more CAN hardware interfaces
+- Save/load user message sets
+
+---
+
+# 🤖 CI/CD Breakdown
+
+## Build steps:
+### PyPI:
+- Replace version
+- Build wheel + sdist
+- Upload securely
+
+### EXE:
+- Install pyinstaller
+- Build using launcher script
+- Upload artifact
+
+### Changelog:
+- git-cliff Docker container ensures deterministic output
+
+### GitHub Release:
+- Attach EXE, wheel, sdist, CHANGELOG
+
+---
+
+# 🗂 File Layout
 
 ```
 win_can_tool/
-│
-├── bus.py              # CAN interface abstraction
-├── cli.py              # Command-line launcher
-├── engine.py           # Message generator / engine thread
-├── gui.py              # PyQt6 GUI
-├── profiles.py         # Built-in message profiles & simulation data
-├── version.py          # Auto-injected version file
-│
-├── __init__.py
-└── __pycache__/
+  bus.py
+  engine.py
+  profiles.py
+  gui.py
+  cli.py
+  version.py
+assets/
+  gui_dark.png
+  gui_light.png
+win_can_tool.ico
 ```
 
 ---
 
-# ⚙ Core Architecture
+# 🧵 Threading Model
 
-The application is built around **four primary components**:
+The GUI runs in the Qt main thread.  
+Message sending runs through QTimers — *not* threads.
 
----
-
-## 1️⃣ `bus.py` — CAN Bus Abstraction Layer
-
-This module wraps multiple CAN device backends using `python-can`, providing a consistent interface for:
-
-* **NeoVI / ValueCAN (neovi)**
-* **Kvaser**
-* **PEAK PCAN**
-* **SocketCAN (Linux virtual can0/vcan0)**
-* **python-can virtual interface**
-
-### Key functions:
-
-#### `open_bus(interface, channel, bitrate)`
-
-Returns a fully configured python-can `Bus` object.
-
-This allows the GUI and CLI to remain backend-agnostic.
-
-#### `bus.shutdown()`
-
-Gracefully closes the CAN device.
+This ensures:
+- stable operation
+- no race conditions
+- flexible scaling
 
 ---
 
-## 2️⃣ `engine.py` — Message Generation Engine
+# 🏁 End
 
-The engine is a **threaded CAN frame scheduler**.
-
-### Responsibilities:
-
-* timing each message
-* periodic sending
-* respecting delays
-* marking raw vs profile messages
-* dynamic payload generation
-
-### Core object:
-
-#### `CanMessageTemplate`
-
-Contains:
-
-* arbitration ID
-* extended/standard flag
-* period (ms)
-* DLC
-* a `payload_func(now)` callback
-* enabled flag
-* optional raw_data
-
-### Example dynamic payload function:
-
-```python
-def payload_func(now):
-    return bytes([int(now) % 255] * 8)
-```
-
-The engine evaluates this function every time the message is due.
-
----
-
-## 3️⃣ `profiles.py` — Built-In Simulation Profiles
-
-Profiles define reusable collections of message templates.
-
-Each profile is a function:
-
-```python
-def build_default_profile() -> list[CanMessageTemplate]
-```
-
-All available profiles are stored in:
-
-```python
-PROFILE_BUILDERS = {
-    "Default": build_default_profile,
-    "GNSS Motion": build_gnss_profile,
-}
-```
-
-Profiles can contain:
-
-* Engine data
-* Fuel data
-* GNSS + movement simulation
-* Generic J1939 messages
-* Custom raw messages
-
-### Live simulation values:
-
-```
-LAT_DEG
-LON_DEG
-COG_DEG
-SOG_MS
-ENGINE_LOAD_PCT
-...
-```
-
-The GUI modifies these via spinboxes.
-
----
-
-## 4️⃣ `gui.py` — PyQt GUI Application
-
-Contains:
-
-### Key UI modules:
-
-* **Profile selector**
-* **Live editing panel (GNSS, engine values, etc.)**
-* **Message table** (shows name, ID, period, enabled)
-* **Raw message add/edit/delete**
-* **Event log**
-* **Start/stop controls**
-* **Help → About dialog**
-
-### Runtime behavior:
-
-* On Start:
-
-  * opens CAN bus
-  * resets GNSS motion origin
-  * starts engine thread
-  * disables editing controls
-
-* While running:
-
-  * GNSS position updates live via QTimer at 5 Hz
-  * GUI reflects new lat/lon without triggering callbacks
-
-* On Stop:
-
-  * engine stops
-  * bus shuts down
-  * controls re-enable
-
----
-
-# 🧬 Message Flow Overview
-
-```
-GUI/CLI
-   │
-   ├── loads a profile from profiles.py
-   │
-   ├── modifies messages (user edits, raw messages)
-   │
-   ▼
-engine.set_messages(list[CanMessageTemplate])
-   │
-   ▼
-Engine Thread:
-   - Compute time until next message
-   - Call payload_func(now)
-   - Send frame via python-can Bus
-```
-
-Raw messages bypass dynamic logic and use static bytes.
-
----
-
-# 🌍 GNSS Motion System
-
-Profiles may use:
-
-```
-compute_moving_lat_lon(now: float) -> (lat, lon)
-```
-
-This simulates continuous movement based on:
-
-* origin timestamp
-* current heading (COG_DEG)
-* speed over ground (SOG_MS)
-
-The GUI syncs spinboxes to GNSS simulation but blocks signals to avoid feedback loops.
-
----
-
-# 🔧 Extending the System
-
-### Adding a new built-in profile:
-
-1. Create a function in `profiles.py`
-2. Add it to `PROFILE_BUILDERS`
-3. It appears automatically in the GUI dropdown
-
----
-
-### Adding a new live-editable parameter:
-
-1. Add global variable in `profiles.py`
-2. Add spinbox in `gui.py`
-3. Add valueChanged callback
-4. Add to JSON saver/loader mapping
-
----
-
-### Adding a new CAN backend:
-
-Modify:
-
-```python
-open_bus() in bus.py
-```
-
----
-
-# 🖨 How Version Injection Works
-
-During CI, when a tag like `v1.2.3` is pushed:
-
-```
-win_can_tool/version.py
-```
-
-is rewritten automatically to:
-
-```python
-__version__ = "1.2.3"
-```
-
-This value is used by:
-
-* GUI window title
-* About dialog
-* CLI `--version`
-* PyPI metadata
-* GitHub release notes
-* EXE metadata (optional)
-
-You **never** manually edit this file.
-
----
-
-# 🐍 PyInstaller Build Notes
-
-PyInstaller is run on Windows in GitHub Actions:
-
-```
-pyinstaller --onefile --windowed can_gui_launcher.py
-```
-
-Important considerations:
-
-* always import modules normally
-* avoid relative filesystem paths
-* embed icons via `--icon win_can_tool.ico`
-* `version.py` must exist before PyInstaller runs
-
----
-
-# 📁 File Added by CI Workflows
-
-### During release automation, the following files get rewritten:
-
-| File                      | Purpose                  |
-| ------------------------- | ------------------------ |
-| `win_can_tool/version.py` | version injection        |
-| `CHANGELOG.md`            | auto-generated changelog |
-| GitHub Release notes      | automatically created    |
-| `dist/win_can_tool.zip`   | EXE release bundle       |
-
----
-
-# 🚀 Future Development Ideas
-
-* Add multi-frame J1939 transport protocol simulation
-* Add NMEA2000 PGN builder
-* Add parameter groups editor (GUI)
-* Add CSV → CAN replay
-* Add CAN sniffing display panel (incoming frames)
-* Add scripting support for custom payloads
-
----
-
-# 🙋 Need Help?
-
-Open an issue:
-
-👉 [https://github.com/kfafard/win_can_tool/issues](https://github.com/kfafard/win_can_tool/issues)
+This doc covers the full internals of the project.  
+Use it when extending core code, adding profiles, or modifying architecture.
