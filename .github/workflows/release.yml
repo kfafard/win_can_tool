@@ -13,6 +13,7 @@ jobs:
   build-pypi:
     name: Build & Publish to PyPI
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -51,6 +52,7 @@ jobs:
     name: Build Windows EXE
     needs: build-pypi
     runs-on: windows-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -85,14 +87,22 @@ jobs:
         with:
           fetch-depth: 0
 
-      # 🚀 Bulletproof git-cliff using Docker
-      - name: Generate changelog via Docker
+      # 🐳 Use official Docker image — no more broken installs
+      - name: Generate changelog
         run: |
           docker run --rm \
             -v ${{ github.workspace }}:/work \
             -w /work \
             orhunp/git-cliff:latest \
             -c cliff.toml -o CHANGELOG.md
+
+      # 🔥 Fix: git-auto-commit cannot run on a tag checkout
+      # Move to main and merge the release commit
+      - name: Switch to main branch
+        run: |
+          git fetch origin main
+          git checkout main
+          git merge --no-edit $GITHUB_SHA
 
       - name: Commit CHANGELOG.md
         uses: stefanzweifel/git-auto-commit-action@v5
