@@ -41,4 +41,4 @@ pytest_cache/
 # Temporary files
 *.tmp
 *.temp
-"folder_tree.txt" 
+"folder_tree.txt"
