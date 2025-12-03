@@ -20,7 +20,7 @@ jobs:
 
             - name: Install git-cliff
               run: |
-                  curl -sS https://raw.githubusercontent.com/orhun/git-cliff/main/install.sh | bash
+                  cargo install git-cliff
 
             - name: Generate changelog
               run: |
