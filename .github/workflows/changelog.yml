@@ -18,12 +18,12 @@ jobs:
               with:
                   fetch-depth: 0
 
-            # Install git-cliff from binary release
             - name: Install git-cliff
               run: |
-                  wget https://github.com/orhun/git-cliff/releases/download/v2.2.1/git-cliff-2.2.1-x86_64-unknown-linux-gnu.tar.gz
-                  tar -xzf git-cliff-2.2.1-x86_64-unknown-linux-gnu.tar.gz
-                  sudo mv git-cliff /usr/local/bin/git-cliff
+                  wget -O cliff.tar.gz https://github.com/orhun/git-cliff/releases/latest/download/git-cliff-$(uname -m)-unknown-linux-gnu.tar.gz
+                  mkdir cliff
+                  tar -xzf cliff.tar.gz -C cliff --strip-components=1
+                  sudo mv cliff/git-cliff /usr/local/bin/git-cliff
                   git-cliff --version
 
             - name: Generate changelog
