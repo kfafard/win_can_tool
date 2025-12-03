@@ -34,6 +34,8 @@ dist/
 
 # PyInstaller output
 *.spec
+__pyinstaller/
+.pyinstaller/
 
 # Testing
 pytest_cache/
@@ -41,4 +43,4 @@ pytest_cache/
 # Temporary files
 *.tmp
 *.temp
-"folder_tree.txt"
+folder_tree.txt

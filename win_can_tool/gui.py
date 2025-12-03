@@ -7,9 +7,10 @@ import time
 from datetime import datetime
 from functools import partial
 from typing import List
+import os
 
 from PyQt6.QtCore import Qt, QTimer
-from PyQt6.QtGui import QAction
+from PyQt6.QtGui import QAction, QIcon
 from PyQt6.QtWidgets import (
     QMenu,
     QApplication,
@@ -1049,10 +1050,18 @@ class CanSimWindow(QWidget):
 
 def main():
     app = QApplication(sys.argv)
+
+    # Determine base path (source vs PyInstaller bundle)
+    base_path = getattr(sys, "_MEIPASS", os.path.dirname(__file__))
+
+    icon_path = os.path.join(base_path, "win_can_tool.ico")
+
+    if os.path.exists(icon_path):
+        app.setWindowIcon(QIcon(icon_path))
+
     win = CanSimWindow()
     win.show()
     sys.exit(app.exec())
-
 
 if __name__ == "__main__":
     main()
