@@ -13,22 +13,28 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - name: Checkout (full history needed)
+            - name: Checkout (full history)
               uses: actions/checkout@v4
               with:
                   fetch-depth: 0
 
             # -----------------------------------------------------
-            # Use official git-cliff action to generate CHANGELOG.md
+            # Install git-cliff (works on Ubuntu 24.04 runners)
             # -----------------------------------------------------
-            - name: Generate changelog
-              uses: orhun/git-cliff-action@v3
-              with:
-                  config: cliff.toml
-                  output: CHANGELOG.md
+            - name: Install git-cliff
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y git-cliff
 
             # -----------------------------------------------------
-            # Commit the updated changelog
+            # Generate CHANGELOG.md
+            # -----------------------------------------------------
+            - name: Generate changelog
+              run: |
+                  git-cliff -o CHANGELOG.md
+
+            # -----------------------------------------------------
+            # Commit + push
             # -----------------------------------------------------
             - name: Commit & Push changelog
               uses: stefanzweifel/git-auto-commit-action@v5
