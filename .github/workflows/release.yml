@@ -72,17 +72,25 @@ jobs:
         name: Generate Changelog
         needs: build-pypi
         runs-on: ubuntu-latest
+
         steps:
-            - uses: actions/checkout@v4
+            - name: Checkout (full history)
+              uses: actions/checkout@v4
               with:
                   fetch-depth: 0
 
-            - name: Use git-cliff action
-              uses: orhun/git-cliff-action@v3
-              with:
-                  config: cliff.toml
-                  args: -o CHANGELOG.md
+            # Install git-cliff from official Ubuntu repo (NO Docker, NO Rust, NO failures)
+            - name: Install git-cliff
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y git-cliff
 
+            # Generate CHANGELOG.md
+            - name: Generate changelog
+              run: |
+                  git-cliff -c ./cliff.toml -o CHANGELOG.md
+
+            # Commit the changelog
             - name: Commit updated changelog
               uses: stefanzweifel/git-auto-commit-action@v5
               with:
