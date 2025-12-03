@@ -18,25 +18,17 @@ jobs:
               with:
                   fetch-depth: 0
 
-            # -----------------------------------------------------
-            # Install git-cliff via apt (stable, no 404s, no cargo)
-            # -----------------------------------------------------
+            # Install git-cliff from binary release
             - name: Install git-cliff
               run: |
-                  sudo apt-get update
-                  sudo apt-get install -y git-cliff
+                  wget https://github.com/orhun/git-cliff/releases/download/v2.2.1/git-cliff-2.2.1-x86_64-unknown-linux-gnu.tar.gz
+                  tar -xzf git-cliff-2.2.1-x86_64-unknown-linux-gnu.tar.gz
+                  sudo mv git-cliff /usr/local/bin/git-cliff
                   git-cliff --version
 
-            # -----------------------------------------------------
-            # Generate changelog into CHANGELOG.md
-            # -----------------------------------------------------
             - name: Generate changelog
-              run: |
-                  git-cliff -o CHANGELOG.md
+              run: git-cliff -o CHANGELOG.md
 
-            # -----------------------------------------------------
-            # Commit & push changelog
-            # -----------------------------------------------------
             - name: Commit & Push changelog
               uses: stefanzweifel/git-auto-commit-action@v5
               with:
