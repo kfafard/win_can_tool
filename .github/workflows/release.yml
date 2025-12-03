@@ -85,20 +85,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install git-cliff
+      # 🚀 Bulletproof git-cliff using Docker
+      - name: Generate changelog via Docker
         run: |
-          set -e
-          URL=$(curl -s https://api.github.com/repos/orhun/git-cliff/releases/latest \
-            | grep "browser_download_url.*x86_64-unknown-linux-musl.tar.gz" \
-            | cut -d '"' -f 4)
-          wget -q "$URL"
-          TARBALL=$(basename "$URL")
-          tar -xzf "$TARBALL"
-          DIR=$(tar -tf "$TARBALL" | head -n 1 | cut -d "/" -f 1)
-          sudo mv "$DIR/git-cliff" /usr/local/bin/git-cliff
-
-      - name: Generate changelog
-        run: git-cliff -c ./cliff.toml -o CHANGELOG.md
+          docker run --rm \
+            -v ${{ github.workspace }}:/work \
+            -w /work \
+            orhunp/git-cliff:latest \
+            -c cliff.toml -o CHANGELOG.md
 
       - name: Commit CHANGELOG.md
         uses: stefanzweifel/git-auto-commit-action@v5
