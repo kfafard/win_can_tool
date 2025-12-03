@@ -66,12 +66,13 @@ jobs:
           pip install pyinstaller
           pip install -r requirements.txt
 
-
       - name: Build EXE
+        shell: pwsh
         run: |
-          if exist win_can_tool.spec del win_can_tool.spec
+          if (Test-Path "win_can_tool.spec") {
+            Remove-Item "win_can_tool.spec"
+          }
           pyinstaller --onefile --windowed --name win_can_tool --icon win_can_tool.ico can_gui_launcher.py
-
 
       - name: Upload EXE artifact
         uses: actions/upload-artifact@v4
@@ -90,7 +91,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      # 🐳 Use official Docker image — no more broken installs
       - name: Generate changelog
         run: |
           docker run --rm \
@@ -99,8 +99,6 @@ jobs:
             orhunp/git-cliff:latest \
             -c cliff.toml -o CHANGELOG.md
 
-      # 🔥 Fix: git-auto-commit cannot run on a tag checkout
-      # Move to main and merge the release commit
       - name: Switch to main branch
         run: |
           git fetch origin main
