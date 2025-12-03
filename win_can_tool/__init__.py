@@ -1,3 +1,3 @@
-# can_sim package
-__version__ = "1.2.5"
+from .version import __version__
+
 __author__ = "Kurtis Fafard"

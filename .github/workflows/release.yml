@@ -4,7 +4,6 @@ on:
   push:
     tags:
       - "v*.*.*"
-  workflow_dispatch:
 
 permissions:
   contents: write
@@ -24,23 +23,22 @@ jobs:
 
       - name: Install PyInstaller and project
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install pyinstaller
-          python -m pip install .
+          pip install --upgrade pip
+          pip install pyinstaller
+          pip install .
 
       - name: Build GUI EXE
         run: |
-          python -m PyInstaller --onefile --windowed --icon win_can_tool.ico --version-file version_info.txt --name win_can_tool can_gui_launcher.py
+          python -m PyInstaller --onefile --windowed --icon win_can_tool.ico --name win_can_tool can_gui_launcher.py
 
-      - name: Archive EXE (ZIP)
-        shell: pwsh
+      - name: Archive EXE
         run: |
-          Compress-Archive -Path "dist/win_can_tool.exe" -DestinationPath "win_can_tool.zip" -Force
+          tar -cvf win_can_tool.zip dist/win_can_tool.exe
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }} # <-- REQUIRED
+          generate_release_notes: true
           files: win_can_tool.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

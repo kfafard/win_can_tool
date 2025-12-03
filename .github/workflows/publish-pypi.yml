@@ -27,6 +27,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install build
 
+      - name: Inject version into pyproject.toml
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "Injecting version $VERSION into pyproject.toml"
+          sed -i "s/^version = .*/version = \"${VERSION}\"/" pyproject.toml
+
+      - name: Inject version into win_can_tool/version.py
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "__version__ = \"${VERSION}\"" > win_can_tool/version.py
+
       - name: Build wheel and sdist
         run: python -m build
 

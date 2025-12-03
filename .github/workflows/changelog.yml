@@ -1,0 +1,33 @@
+name: Update Changelog
+
+on:
+    push:
+        tags:
+            - "v*.*.*"
+
+permissions:
+    contents: write
+
+jobs:
+    changelog:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout (full history needed)
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Install git-cliff
+              run: |
+                  curl -sS https://raw.githubusercontent.com/orhun/git-cliff/main/install.sh | bash
+
+            - name: Generate changelog
+              run: |
+                  ./git-cliff -o CHANGELOG.md
+
+            - name: Commit & Push changelog
+              uses: stefanzweifel/git-auto-commit-action@v5
+              with:
+                  commit_message: "docs: update CHANGELOG.md for ${{ github.ref_name }}"
+                  file_pattern: CHANGELOG.md

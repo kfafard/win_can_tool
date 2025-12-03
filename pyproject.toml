@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "win-can-tool"
-version = "1.0.0"
+version = "0.0.0"
 description = "Windows CAN simulator and testing tool with GUI and CLI."
 authors = [{ name = "Kurtis Fafard" }]
 readme = "README.md"
@@ -17,13 +17,8 @@ dependencies = [
 ]
 
 keywords = [
-    "CAN",
-    "J1939",
-    "NMEA2000",
-    "tractor",
-    "simulator",
-    "python-can",
-    "PyQt6",
+    "CAN", "J1939", "NMEA2000", "tractor",
+    "simulator", "python-can", "PyQt6"
 ]
 
 classifiers = [
@@ -44,7 +39,6 @@ Issues = "https://github.com/kfafard/win_can_tool/issues"
 win-can-cli = "win_can_tool.cli:main"
 win-can-gui = "win_can_tool.gui:main"
 
-# Explicit package discovery (fixes wheel build on GitHub Actions)
 [tool.setuptools]
 package-dir = {"" = "."}
 
