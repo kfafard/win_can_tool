@@ -1,56 +1,52 @@
-name: Publish to PyPI
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
 
-on:
-  push:
-    tags:
-      - "v*.*.*"
+[project]
+name = "win-can-tool"
+version = "0.0.0"
+description = "Windows CAN simulator and testing tool with GUI and CLI."
+authors = [{ name = "Kurtis Fafard" }]
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
 
-permissions:
-  contents: read
-  id-token: write
+dependencies = [
+    "PyQt6",
+    "python-can"
+]
 
-jobs:
-  build-and-publish:
-    runs-on: ubuntu-latest
+keywords = [
+    "CAN",
+    "J1939",
+    "NMEA2000",
+    "tractor",
+    "simulator",
+    "python-can",
+    "PyQt6"
+]
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Testing"
+]
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
+[project.urls]
+Homepage = "https://github.com/kfafard/win_can_tool"
+Source = "https://github.com/kfafard/win_can_tool"
+Issues = "https://github.com/kfafard/win_can_tool/issues"
 
-      - name: Install build dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install build
+[project.scripts]
+win-can-cli = "win_can_tool.cli:main"
+win-can-gui = "win_can_tool.gui:main"
 
-      # -----------------------------------------------------
-      # Inject version into pyproject.toml and version.py
-      # -----------------------------------------------------
-      - name: Inject version
-        run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
-          echo "Injecting version: $VERSION"
+[tool.setuptools]
+package-dir = { "" = "." }
 
-          # Update pyproject.toml safely (GNU + BSD compatible)
-          sed -i.bak "s/^version = \".*\"/version = \"$VERSION\"/" pyproject.toml
-
-          # Update package version file
-          echo "__version__ = \"$VERSION\"" > win_can_tool/version.py
-
-      # -----------------------------------------------------
-      # Build wheel and sdist using NEW VERSION
-      # -----------------------------------------------------
-      - name: Build package
-        run: python -m build
-
-      # -----------------------------------------------------
-      # Publish to PyPI
-      # -----------------------------------------------------
-      - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@v1.8.11
-        with:
-          password: ${{ secrets.PYPI_API_TOKEN }}
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["win_can_tool*"]
