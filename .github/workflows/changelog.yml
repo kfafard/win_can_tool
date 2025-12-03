@@ -18,14 +18,26 @@ jobs:
               with:
                   fetch-depth: 0
 
+            # -----------------------------------------------------
+            # Install git-cliff using prebuilt binaries (no cargo!)
+            # -----------------------------------------------------
             - name: Install git-cliff
               run: |
-                  cargo install git-cliff
+                  wget https://github.com/orhun/git-cliff/releases/latest/download/git-cliff-linux-x86_64.tar.gz
+                  tar -xzf git-cliff-linux-x86_64.tar.gz
+                  sudo mv git-cliff /usr/local/bin/git-cliff
+                  git-cliff --version
 
+            # -----------------------------------------------------
+            # Generate changelog into CHANGELOG.md
+            # -----------------------------------------------------
             - name: Generate changelog
               run: |
-                  ./git-cliff -o CHANGELOG.md
+                  git-cliff -o CHANGELOG.md
 
+            # -----------------------------------------------------
+            # Commit the updated changelog
+            # -----------------------------------------------------
             - name: Commit & Push changelog
               uses: stefanzweifel/git-auto-commit-action@v5
               with:

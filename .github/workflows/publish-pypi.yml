@@ -27,20 +27,29 @@ jobs:
           python -m pip install --upgrade pip
           pip install build
 
-      - name: Inject version into pyproject.toml
+      # -----------------------------------------------------
+      # Inject version into pyproject.toml and version.py
+      # -----------------------------------------------------
+      - name: Inject version
         run: |
           VERSION=${GITHUB_REF#refs/tags/v}
-          echo "Injecting version $VERSION into pyproject.toml"
-          sed -i "s/^version = .*/version = \"${VERSION}\"/" pyproject.toml
+          echo "Injecting version: $VERSION"
 
-      - name: Inject version into win_can_tool/version.py
-        run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
-          echo "__version__ = \"${VERSION}\"" > win_can_tool/version.py
+          # Update pyproject.toml (works on GNU + BSD sed)
+          sed -i.bak "s/version = \".*\"/version = \"$VERSION\"/" pyproject.toml
 
-      - name: Build wheel and sdist
+          # Update package version file
+          echo "__version__ = \"$VERSION\"" > win_can_tool/version.py
+
+      # -----------------------------------------------------
+      # Build wheel and sdist using NEW VERSION
+      # -----------------------------------------------------
+      - name: Build package
         run: python -m build
 
+      # -----------------------------------------------------
+      # Publish to PyPI
+      # -----------------------------------------------------
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@v1.8.11
         with:

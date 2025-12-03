@@ -18,20 +18,36 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Inject version into win_can_tool/version.py
+
+      # --------------------------------------------------
+      # Inject version into win_can_tool/version.py
+      # --------------------------------------------------
+      - name: Inject version
+        shell: pwsh
         run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
-          echo "__version__ = \"${VERSION}\"" > win_can_tool/version.py
+          $version = $env:GITHUB_REF -replace '^refs/tags/v', ''
+          Write-Host "Injecting version: $version"
+          Set-Content -Path "win_can_tool/version.py" -Value "__version__ = `"$version`""
+
+      # --------------------------------------------------
+      # Install PyInstaller + the project
+      # --------------------------------------------------
       - name: Install PyInstaller and project
         run: |
           python -m pip install --upgrade pip
           python -m pip install pyinstaller
           python -m pip install .
 
+      # --------------------------------------------------
+      # Build the EXE
+      # --------------------------------------------------
       - name: Build GUI EXE
         run: |
           python -m PyInstaller --onefile --windowed --icon win_can_tool.ico --version-file version_info.txt --name win_can_tool can_gui_launcher.py
 
+      # --------------------------------------------------
+      # Upload EXE artifact
+      # --------------------------------------------------
       - name: Upload EXE artifact
         uses: actions/upload-artifact@v4
         with:
