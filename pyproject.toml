@@ -11,7 +11,10 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 
-dependencies = ["PyQt6", "python-can"]
+dependencies = [
+    "PyQt6",
+    "python-can"
+]
 
 keywords = [
     "CAN",
@@ -40,3 +43,11 @@ Issues = "https://github.com/kfafard/win_can_tool/issues"
 [project.scripts]
 win-can-cli = "win_can_tool.cli:main"
 win-can-gui = "win_can_tool.gui:main"
+
+# Explicit package discovery (fixes wheel build on GitHub Actions)
+[tool.setuptools]
+package-dir = {"" = "."}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["win_can_tool*"]
