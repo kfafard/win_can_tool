@@ -48,6 +48,7 @@ jobs:
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
 
+
   build-exe:
     name: Build Windows EXE
     needs: build-pypi
@@ -62,23 +63,37 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
+        shell: pwsh
         run: |
           pip install pyinstaller
           pip install -r requirements.txt
 
-      - name: Build EXE
+      - name: Debug icon availability
         shell: pwsh
         run: |
-          if (Test-Path "win_can_tool.spec") {
-            Remove-Item "win_can_tool.spec"
-          }
-          pyinstaller --onefile --windowed --name win_can_tool --icon win_can_tool.ico can_gui_launcher.py
+          Write-Host "Workspace path: ${{ github.workspace }}"
+          Write-Host "Listing workspace:"
+          Get-ChildItem "${{ github.workspace }}"
+          Write-Host "Checking icon file exists:"
+          Test-Path "${{ github.workspace }}\win_can_tool.ico"
+
+      - name: Build EXE via PyInstaller
+        shell: pwsh
+        run: |
+          if (Test-Path "win_can_tool.spec") { Remove-Item "win_can_tool.spec" -Force }
+          pyinstaller `
+            --onefile `
+            --windowed `
+            --name win_can_tool `
+            --icon "${{ github.workspace }}\win_can_tool.ico" `
+            can_gui_launcher.py
 
       - name: Upload EXE artifact
         uses: actions/upload-artifact@v4
         with:
           name: win_can_tool-exe
           path: dist/win_can_tool.exe
+
 
   changelog:
     name: Generate Changelog
@@ -99,7 +114,7 @@ jobs:
             orhunp/git-cliff:latest \
             -c cliff.toml -o CHANGELOG.md
 
-      - name: Switch to main branch
+      - name: Switch to main branch and merge release commit
         run: |
           git fetch origin main
           git checkout main
@@ -116,6 +131,7 @@ jobs:
         with:
           name: changelog
           path: CHANGELOG.md
+
 
   release:
     name: GitHub Release
