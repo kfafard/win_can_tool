@@ -167,6 +167,12 @@ class CanSimWindow(QWidget):
     def __init__(self):
         super().__init__()
 
+            # ---- Ensure the icon is applied to the window itself ----
+        base_path = getattr(sys, "_MEIPASS", os.path.dirname(__file__))
+        icon_path = os.path.join(base_path, "win_can_tool.ico")
+        if os.path.exists(icon_path):
+            self.setWindowIcon(QIcon(icon_path))
+
         self.setWindowTitle(f"CAN Simulator v{__version__}")
         self.resize(1000, 720)
 
@@ -1051,13 +1057,21 @@ class CanSimWindow(QWidget):
 def main():
     app = QApplication(sys.argv)
 
-    # Determine base path (source vs PyInstaller bundle)
+    # Figure out where we are (source vs PyInstaller bundle)
     base_path = getattr(sys, "_MEIPASS", os.path.dirname(__file__))
 
-    icon_path = os.path.join(base_path, "win_can_tool.ico")
+    # Places to look for the icon:
+    #  - In the bundle root (PyInstaller with --add-data)
+    #  - In the project root when running from source
+    candidate_paths = [
+        os.path.join(base_path, "win_can_tool.ico"),
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "win_can_tool.ico"),
+    ]
 
-    if os.path.exists(icon_path):
-        app.setWindowIcon(QIcon(icon_path))
+    for icon_path in candidate_paths:
+        if os.path.exists(icon_path):
+            app.setWindowIcon(QIcon(icon_path))
+            break
 
     win = CanSimWindow()
     win.show()
