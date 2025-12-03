@@ -1,44 +1,159 @@
-name: Build & Publish Release
+name: Build, Publish, and Release
 
 on:
-  push:
-    tags:
-      - "v*.*.*"
+    push:
+        tags:
+            - "v*.*.*"
 
 permissions:
-  contents: write
+    contents: write
+    id-token: write
 
 jobs:
-  build-and-release:
-    runs-on: windows-latest
+    # ---------------------------------------------------------
+    # 1) VERSION INJECTION + PYPI BUILD + PUBLISH
+    # ---------------------------------------------------------
+    build-pypi:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout repository (full history for changelog later)
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
 
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.12"
 
-      - name: Install PyInstaller and project
-        run: |
-          pip install --upgrade pip
-          pip install pyinstaller
-          pip install .
+            - name: Install build tools
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install build
 
-      - name: Build GUI EXE
-        run: |
-          python -m PyInstaller --onefile --windowed --icon win_can_tool.ico --name win_can_tool can_gui_launcher.py
+            - name: Inject version from git tag
+              run: |
+                  VERSION=${GITHUB_REF#refs/tags/v}
+                  echo "Using version: $VERSION"
 
-      - name: Archive EXE
-        run: |
-          tar -cvf win_can_tool.zip dist/win_can_tool.exe
+                  sed -i.bak "s/^version = \".*\"/version = \"$VERSION\"/" pyproject.toml
+                  echo "__version__ = \"$VERSION\"" > win_can_tool/version.py
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          generate_release_notes: true
-          files: win_can_tool.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: Build wheel + sdist
+              run: python -m build
+
+            - name: Upload artifacts for next jobs
+              uses: actions/upload-artifact@v4
+              with:
+                  name: pypi-artifacts
+                  path: dist/*
+
+            - name: Publish to PyPI
+              uses: pypa/gh-action-pypi-publish@v1.8.11
+              with:
+                  password: ${{ secrets.PYPI_API_TOKEN }}
+
+    # ---------------------------------------------------------
+    # 2) WINDOWS EXE BUILD (needs PyPI build to finish)
+    # ---------------------------------------------------------
+    build-exe:
+        needs: build-pypi
+        runs-on: windows-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.12"
+
+            - name: Inject version
+              run: |
+                  $v = $env:GITHUB_REF.Replace("refs/tags/v", "")
+                  Set-Content win_can_tool/version.py "__version__ = `"$v`""
+
+            - name: Install project + pyinstaller
+              run: |
+                  pip install --upgrade pip
+                  pip install pyinstaller
+                  pip install .
+
+            - name: Build Windows EXE
+              run: |
+                  python -m PyInstaller `
+                    --onefile `
+                    --windowed `
+                    --icon win_can_tool.ico `
+                    --name win_can_tool `
+                    can_gui_launcher.py
+
+            - name: Upload EXE for next job
+              uses: actions/upload-artifact@v4
+              with:
+                  name: exe-artifact
+                  path: dist/win_can_tool.exe
+
+    # ---------------------------------------------------------
+    # 3) GENERATE CHANGELOG (needs both builds)
+    # ---------------------------------------------------------
+    changelog:
+        needs: [build-pypi, build-exe]
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Install git-cliff
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y git-cliff
+
+            - name: Generate CHANGELOG.md
+              run: git-cliff -o CHANGELOG.md
+
+            - name: Upload CHANGELOG for final release job
+              uses: actions/upload-artifact@v4
+              with:
+                  name: changelog
+                  path: CHANGELOG.md
+
+    # ---------------------------------------------------------
+    # 4) FINAL RELEASE (combines all artifacts)
+    # ---------------------------------------------------------
+    release:
+        needs: [build-pypi, build-exe, changelog]
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Download PyPI artifacts
+              uses: actions/download-artifact@v4
+              with:
+                  name: pypi-artifacts
+                  path: artifacts/pypi
+
+            - name: Download EXE artifact
+              uses: actions/download-artifact@v4
+              with:
+                  name: exe-artifact
+                  path: artifacts/exe
+
+            - name: Download changelog artifact
+              uses: actions/download-artifact@v4
+              with:
+                  name: changelog
+                  path: artifacts/changelog
+
+            - name: Create GitHub Release
+              uses: softprops/action-gh-release@v2
+              with:
+                  files: |
+                      artifacts/pypi/*
+                      artifacts/exe/win_can_tool.exe
+                      artifacts/changelog/CHANGELOG.md
+                  generate_release_notes: true
