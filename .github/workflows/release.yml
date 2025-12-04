@@ -77,15 +77,24 @@ jobs:
           Write-Host "Checking icon file exists:"
           Test-Path "${{ github.workspace }}\win_can_tool.ico"
 
-      - name: Build EXE via PyInstaller
+      - name: Build EXE via PyInstaller (includes CAN backends)
         shell: pwsh
         run: |
           if (Test-Path "win_can_tool.spec") { Remove-Item "win_can_tool.spec" -Force }
+
           pyinstaller `
             --onefile `
             --windowed `
             --name win_can_tool `
             --icon "${{ github.workspace }}\win_can_tool.ico" `
+            --add-data "assets\gui_dark.png;assets" `
+            --add-data "assets\gui_light.png;assets" `
+            --hidden-import can.interfaces.ics_neovi `
+            --hidden-import can.interfaces.kvaser `
+            --hidden-import can.interfaces.virtual `
+            --hidden-import can.interfaces.vector `
+            --hidden-import can.interfaces.pcan `
+            --hidden-import can.interfaces.slcan `
             can_gui_launcher.py
 
       - name: Upload EXE artifact
