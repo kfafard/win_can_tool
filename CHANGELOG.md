@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 ## <!-- 3 -->📚 Documentation
 
 
+- Update changelog for v1.2.17 (0bec380)
+
+
+
+## <!-- 3 -->📚 Documentation
+
+
 - Update changelog for v1.2.16 (4c00536)
 
 
