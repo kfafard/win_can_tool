@@ -56,6 +56,42 @@ pytest
 
 ---
 
+## ✅ Commit Message Guidelines
+
+All commits must follow this structure:
+
+<type>(optional-scope): <short summary>
+
+<optional detailed description>
+
+### ✅ Allowed Types
+- feat     → New feature
+- fix      → Bug fix
+- docs     → Documentation only changes
+- refactor → Code change that neither fixes a bug nor adds a feature
+- perf     → Performance improvement
+- test     → Adding or updating tests
+- build    → Build system, tooling, dependencies
+- ci       → CI/CD changes
+- chore    → Maintenance, cleanup, formatting
+
+### ✅ Examples
+
+feat(simulator): add raw CAN message editor  
+fix(exe): include missing Kvaser backend  
+docs(changelog): reconstruct release history through v1.2.27  
+ci(release): attach versioned EXE to GitHub release  
+
+### ✅ Rules
+- Use present tense (“add”, not “added”)
+- Keep the summary under 72 characters
+- Always explain **what changed and why**
+- Reference issues when applicable (e.g. `Closes #24`)
+
+This format enables automatic changelog generation and clean release notes.
+
+---
+
 # 🌿 Branching Model
 
 We use a simple Git flow:
