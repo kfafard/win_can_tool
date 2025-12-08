@@ -185,6 +185,50 @@ This ensures:
 - flexible scaling
 
 ---
+## ✅ git-cliff Commit Convention
+
+This project uses **git-cliff + Conventional Commits** to automatically generate:
+
+- CHANGELOG.md
+- GitHub Release Notes
+- Versioned release summaries
+
+### ✅ Generated Changelog Sections
+
+| Commit Type | Changelog Section |
+|-------------|-------------------|
+| feat        | Added             |
+| fix         | Fixed             |
+| perf        | Performance       |
+| refactor    | Changed           |
+| build       | Build             |
+| ci          | CI                |
+| docs        | Documentation     |
+| test        | Tests             |
+| chore       | Maintenance       |
+
+### ✅ Example Auto-Mapped Commits
+
+feat(simulator): add GNSS motion simulation  
+→ Added → GNSS motion simulation
+
+fix(exe): correct icon bundling path  
+→ Fixed → Windows EXE icon packaging
+
+ci(release): attach versioned binary  
+→ CI → GitHub Actions release automation
+
+### ✅ Breaking Changes
+
+Use **!** to flag breaking changes:
+
+feat(api)!: change profile schema
+
+This will appear under:
+⚠️ **Breaking Changes**
+
+This system ensures every release after **v1.2.27** is automatically documented with zero manual editing.
+---
 
 # 🏁 End
 
