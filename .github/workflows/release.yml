@@ -89,6 +89,7 @@ jobs:
           if (Test-Path "win_can_tool.spec") { Remove-Item "win_can_tool.spec" -Force }
 
           pyinstaller `
+            --clean`
             --onefile `
             --windowed `
             --name win_can_tool-${{ github.ref_name }} `
