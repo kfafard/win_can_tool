@@ -167,27 +167,30 @@ class CanSimWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-            # ---- Ensure the icon is applied to the window itself ----
+        # ---- Ensure the icon is applied to the window itself ----
         base_path = getattr(sys, "_MEIPASS", os.path.dirname(__file__))
         icon_path = os.path.join(base_path, "win_can_tool.ico")
+
         if os.path.exists(icon_path):
             self.setWindowIcon(QIcon(icon_path))
-
+    
+        # ---- Window title WITH version ----
         self.setWindowTitle(f"CAN Simulator v{__version__}")
         self.resize(1000, 720)
-
+    
         self.bus = None
         self.engine: CanSimEngine | None = None
-
+    
         self.current_profile_name: str = DEFAULT_PROFILE_NAME
         self.messages: List[CanMessageTemplate] = PROFILE_BUILDERS[self.current_profile_name]()
-
+    
         self._build_ui()
-
+    
         # Timer to keep live lat/lon in sync with moving GNSS
         self.position_timer = QTimer(self)
         self.position_timer.setInterval(200)  # 5 Hz update
         self.position_timer.timeout.connect(self._update_live_position_from_motion)
+
 
     # -------------------------------------------------------------------
     # UI construction
