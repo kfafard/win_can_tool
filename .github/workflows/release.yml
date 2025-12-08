@@ -91,7 +91,7 @@ jobs:
           pyinstaller `
             --onefile `
             --windowed `
-            --name win_can_tool `
+            --name win_can_tool-${{ github.ref_name }} `
             --icon "${{ github.workspace }}\win_can_tool.ico" `
             --add-data "assets\gui_dark.png;assets" `
             --add-data "assets\gui_light.png;assets" `
