@@ -109,8 +109,9 @@ jobs:
       - name: Upload EXE artifact
         uses: actions/upload-artifact@v4
         with:
-          name: win_can_tool-exe
-          path: dist/win_can_tool.exe
+          name: win_can_tool-exe-${{ github.ref_name }}
+          path: dist/win_can_tool-${{ github.ref_name }}.exe
+
 
 
   changelog:
@@ -162,7 +163,7 @@ jobs:
       - name: Download EXE
         uses: actions/download-artifact@v4
         with:
-          name: win_can_tool-exe
+          name: win_can_tool-exe-${{ github.ref_name }}
           path: ./dist
 
       - name: Download Python package artifacts
@@ -182,7 +183,7 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}
           files: |
-            dist/win_can_tool.exe
+            dist/win_can_tool-${{ github.ref_name }}.exe
             dist/*.whl
             dist/*.tar.gz
             CHANGELOG.md
