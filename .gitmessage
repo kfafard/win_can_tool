@@ -1,0 +1,21 @@
+<type>(<scope>): <short imperative summary>
+
+Why:
+- What problem this solves
+- Why this change is needed
+- Any context or constraints
+
+What Changed:
+- Bullet list of technical changes
+- Key files touched
+- Behavior changes
+
+Next:
+- Follow-up tasks
+- Known technical debt
+- Future improvements
+
+Refs:
+- Issues:
+- Tasks:
+- Related:
