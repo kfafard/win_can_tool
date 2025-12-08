@@ -2,11 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
-## <!-- 3 -->📚 Documentation
+## <!-- 7 -->⚙️ Miscellaneous Tasks
+
+- Stabilized Windows EXE build and artifact naming
+- Finalized unified GitHub release workflow for PyPI + EXE + changelog
+- Version injection confirmed working in EXE title and About dialog
+- Multiple PyInstaller icon attempts (icon deferred)
 
 
-- Update changelog for v1.2.26 (96dde30)
+## <!-- 7 -->⚙️ Miscellaneous Tasks
 
+- Refactored Windows EXE build naming to include version tag
+- Improved GitHub Actions artifact handling for EXE builds
+- Debugged PyInstaller flag usage on Windows runner
 
 
 ## <!-- 3 -->📚 Documentation
