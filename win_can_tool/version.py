@@ -1,1 +1,2 @@
-__version__ = "0.0.0"  # auto-injected during CI
+__version__ = "1.2.23"
+__author__ = "Kurtis Fafard"
