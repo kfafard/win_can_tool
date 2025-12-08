@@ -2,188 +2,274 @@
 
 All notable changes to this project will be documented in this file.
 
-<<<<<<< HEAD
-The format is based on **Keep a Changelog**, and this project follows **Semantic Versioning (SemVer)**.
-=======
-This project follows:
-- [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
-- [Semantic Versioning](https://semver.org/)
+## <!-- 10 -->💼 Other
 
-Changelog entries are automatically generated from commit history using **git-cliff** based on enforced commit conventions.
->>>>>>> release/v1.2.28-prep
 
----
+- Integrate v1.2.28 release preparation into main (d24c8cd)
 
-## [Unreleased]
 
-### Added
-<<<<<<< HEAD
-- (Automatically generated during the next release)
 
-### Changed
-- (Automatically generated during the next release)
+## <!-- 3 -->📚 Documentation
 
-### Fixed
-- (Automatically generated during the next release)
-=======
-- *(Planned features for v1.2.28 go here)*
 
-### Changed
-- *(Planned behavior changes for v1.2.28 go here)*
+- Update changelog for v1.2.27 (1d014eb)
 
-### Fixed
-- *(Planned bug fixes for v1.2.28 go here)*
->>>>>>> release/v1.2.28-prep
+- Reconstruct release history through v1.2.27 and add Unreleased section (7e84a3c)
 
----
+- Add standardized commit message guidelines (9c2f011)
 
-## [v1.2.27] - 2025-12-08
+- Document git-cliff commit convention and changelog workflow (f3c744f)
 
-### Added
-<<<<<<< HEAD
-- Full hardware support for **ValueCAN4** and **Kvaser Leaf** CAN interfaces.
-- GUI-based **raw CAN message editor** with:
-  - Add / edit / delete support
-  - Extended and standard ID handling
-  - Editable periods and payloads
-- **Moving GNSS position simulation** with live UI updates.
-- **Profile save/load system** using JSON, including:
-  - Live GNSS values
-  - Message enable states
-  - Raw message persistence
-- **Automated GitHub Actions Release Pipeline**:
-  - Tag-based releases (`v*.*.*`)
-  - PyPI publishing
-  - Windows EXE build via PyInstaller
-  - GitHub Release creation with attached artifacts
-- Automatic version injection into:
-  - `pyproject.toml`
-  - `win_can_tool/version.py`
-- Auto-generated GitHub release artifacts.
-- CAN backend auto-detection via `python-can`.
-- About dialog showing **version and author** from package metadata.
+- Normalize structure before v1.2.28 release (320f458)
 
-### Changed
-- Windows EXE output naming now follows tag version:
-  - Example: `win_can_tool-v1.2.27.exe`
-- CI release logic now fully centralized in GitHub Actions.
-- Changelog generation now handled by **git-cliff** during releases.
-- Internal CAN interface handling generalized for multiple backends.
-- GNSS motion origin reset on each simulator start.
 
-### Fixed
-- PyInstaller crashes caused by missing ICS modules.
-- Hidden-import issues for multiple CAN backends.
-- EXE artifact mismatches in CI.
-- CI failures caused by stale `.spec` files.
-- Live GNSS values not updating when motion was enabled.
-- CAN engine start/stop state cleanup issues.
 
-### Known Issues
-- Windows EXE icon does not embed consistently in CI builds.
-- Windows SmartScreen warning appears due to unsigned binaries.
-- EXE icon embedding varies by Windows cache behavior.
+## <!-- 7 -->⚙️ Miscellaneous Tasks
 
----
 
-## [v1.2.26] - 2025-12-05
+- Add standardized commit message template (4ad079a)
 
-### Added
-- Initial GitHub Actions release workflow.
-- Basic PyInstaller Windows EXE generation.
-- Early ValueCAN4 support.
-- Initial raw message simulation support.
 
-### Changed
-- Internal simulator engine refactoring.
-- Profile system groundwork.
 
-### Fixed
-- CAN send timing inaccuracies.
-- Early python-can backend detection bugs.
+## <!-- 3 -->📚 Documentation
 
----
 
-## [v1.2.25] - 2025-11-30
+- Update changelog for v1.2.26 (96dde30)
 
-### Added
-- Initial public simulator GUI.
-- GNSS, speed, engine load, and fuel simulation.
-- CAN message table with enable/disable controls.
 
-### Fixed
-- UI crashes related to missing profile defaults.
 
----
+## <!-- 3 -->📚 Documentation
 
-## [v1.2.0] - 2025-11-10
 
-### Added
-- First structured release of **win_can_tool**.
-- Multi-message CAN simulation engine.
-- Qt-based GUI frontend.
-- Profile-based message presets.
+- Update changelog for v1.2.25 (d1900f4)
 
----
-=======
-- Raw CAN message editor dialog (add, edit, delete).
-- JSON-based profile save and load support.
-- Live GNSS position simulation with motion-based updates.
-- Engine, fuel, and coolant live simulation controls.
-- Windows EXE build via GitHub Actions CI pipeline.
-- Automatic version injection into builds from Git tags.
-- Event Log panel to track runtime simulator activity.
-- Dark/light GUI assets bundled into Windows EXE.
-- Commit message template and enforced formatting (`.gitmessage`).
 
-### Changed
-- Refactored CAN simulation engine structure.
-- Standardized CAN message period handling.
-- Improved profile switching safety during active simulation.
-- Improved message table layout and column resizing behavior.
-- Improved Windows EXE build reliability and reproducibility.
-- GitHub Actions workflow split into:
-  - PyPI build & publish
-  - Windows EXE build
-  - Changelog generation
-  - GitHub Release automation
 
-### Fixed
-- Incorrect GNSS live value refresh while simulator was running.
-- Raw message persistence bugs in JSON profile files.
-- Simulator failing to shutdown CAN bus cleanly after Stop.
-- Profile reload not updating live value controls correctly.
-- Period spinboxes not syncing properly with message model.
-- Multiple PyInstaller backend import failures for CAN adapters.
+## <!-- 3 -->📚 Documentation
 
----
 
-## [v1.2.26] - 2025-12-02
+- Update changelog for v1.2.24 (c1e97b9)
 
-### Added
-- Initial PYPI packaging pipeline.
-- Initial Windows EXE generation via PyInstaller.
-- GNSS PGN stubs for GPS-based simulation.
-- Tractor base simulation profile.
 
-### Fixed
-- Multiple startup crashes from missing CAN imports.
-- Incorrect PGN payload formatting.
-- Broken message enable/disable behavior.
 
----
+## <!-- 3 -->📚 Documentation
 
-## [v1.2.25] - 2025-11-23
 
-### Added
-- Initial GUI-based CAN Simulator interface.
-- Base CAN transmit engine.
-- Profile-based message builder system.
+- Update changelog for v1.2.23 (6c6a776)
 
----
 
-## [v1.2.0] - 2025-10-01
 
-### Added
-- Initial public release of `win_can_tool`.
->>>>>>> release/v1.2.28-prep
+## <!-- 3 -->📚 Documentation
+
+
+- Update changelog for v1.2.22 (b90d1dd)
+
+
+
+## <!-- 3 -->📚 Documentation
+
+
+- Update changelog for v1.2.21 (03bcc1d)
+
+
+
+## <!-- 3 -->📚 Documentation
+
+
+- Update changelog for v1.2.20 (13d9b6a)
+
+
+
+## <!-- 3 -->📚 Documentation
+
+
+- Update changelog for v1.2.19 (3acb588)
+
+
+
+## <!-- 3 -->📚 Documentation
+
+
+- Update changelog for v1.2.18 (9f63a84)
+
+
+
+## <!-- 3 -->📚 Documentation
+
+
+- Update changelog for v1.2.17 (0bec380)
+
+
+
+## <!-- 3 -->📚 Documentation
+
+
+- Update changelog for v1.2.16 (4c00536)
+
+
+
+## <!-- 3 -->📚 Documentation
+
+
+- Update changelog for v1.2.12 (3fad73d)
+
+
+
+## <!-- 3 -->📚 Documentation
+
+
+- Update changelog for v1.2.11 (14643b4)
+
+
+
+## <!-- 3 -->📚 Documentation
+
+
+- Update changelog for v1.2.10 (4b4d836)
+
+
+
+## <!-- 3 -->📚 Documentation
+
+
+- Update changelog for v1.2.9 (3451ea6)
+
+
+
+## <!-- 3 -->📚 Documentation
+
+
+- Update changelog for v1.2.8 (9cd7713)
+
+
+
+## <!-- 3 -->📚 Documentation
+
+
+- Update changelog for v1.2.7 (4459bee)
+
+
+
+## <!-- 3 -->📚 Documentation
+
+
+- Update changelog for v1.2.6 (db50b2e)
+
+
+
+## <!-- 1 -->🐛 Bug Fixes
+
+
+- Correct PyInstaller path for EXE build (453d835)
+
+
+
+## <!-- 3 -->📚 Documentation
+
+
+- Update changelog for v1.2.5 (a853549)
+
+
+
+## <!-- 3 -->📚 Documentation
+
+
+- Update changelog for v1.2.4 (09cbb61)
+
+
+
+## <!-- 7 -->⚙️ Miscellaneous Tasks
+
+
+- Fix changelog job (remove broken docker action) (d66204f)
+
+
+
+## <!-- 7 -->⚙️ Miscellaneous Tasks
+
+
+- Add unified release pipeline (77cd689)
+
+
+
+## <!-- 1 -->🐛 Bug Fixes
+
+
+- Normalize project name to fix PyPI metadata (4432a3f)
+
+
+
+## <!-- 7 -->⚙️ Miscellaneous Tasks
+
+
+- Remove old gitcliff config (6c50add)
+
+- Remove folder_tree.txt (accidental commit) (bc88cf0)
+
+
+
+## <!-- 7 -->⚙️ Miscellaneous Tasks
+
+
+- More "fixes" (8514a7e)
+
+
+
+## <!-- 1 -->🐛 Bug Fixes
+
+
+- Correct pyproject.toml classifier causing metadata failure (d56e34d)
+
+
+
+## <!-- 1 -->🐛 Bug Fixes
+
+
+- Restore pyproject.toml (accidental overwrite) (7d243ef)
+
+
+
+## <!-- 7 -->⚙️ Miscellaneous Tasks
+
+
+- Fix Windows version injection and stabilize EXE build workflow (069e629)
+
+- Try to fix changelog workflow (1c5b7ec)
+
+
+
+## <!-- 0 -->🚀 Features
+
+
+- GNSS UI modernization (8661fe9)
+
+
+
+## <!-- 1 -->🐛 Bug Fixes
+
+
+- Explicit package discovery for wheel builds (ac784f0)
+
+- Working git-cliff installer (f3ddab8)
+
+
+
+## <!-- 7 -->⚙️ Miscellaneous Tasks
+
+
+- Bump version to 1.2.0 (9046301)
+
+- Bump version to 1.2.1 (6cffd13)
+
+- Bump version to 1.2.2 (53718f9)
+
+- Bump version to 1.2.3 (619b3f9)
+
+- Bump version to 1.2.4 (4a93fd8)
+
+- Bump version to 1.2.5 (b116e3c)
+
+- Add version injection, changelog, auto release workflows (822e07a)
+
+
+Generated by [git-cliff](https://github.com/orhun/git-cliff).
